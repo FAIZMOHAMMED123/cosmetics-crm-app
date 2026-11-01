@@ -1,39 +1,47 @@
-# Cosmetics CRM & Inventory Management Platform 💄📦
+Cosmetics CRM & Inventory Management Platform 💄📦
 
 A robust full-stack CRM and inventory management application designed for cosmetics businesses, retail operations, and product tracking. The platform provides secure role-based access, comprehensive inventory lifecycle management, and dynamic sales metric aggregations.
 
----
+🛠️ Tech Stack
 
-## 🛠️ Tech Stack
+Backend: Python, FastAPI, Pydantic (v2)
 
-- **Backend:** Python, [FastAPI](https://fastapi.tiangolo.com/), Pydantic (v2)
-- **Database:** [MongoDB](https://www.mongodb.com/) (PyMongo Driver)
-- **Security & Authentication:** JWT (JSON Web Tokens), Passlib (Bcrypt hashing)
-- **Frontend:** Vanilla JavaScript, HTML5, Modern CSS
-- **API Documentation:** Interactive OpenAPI documentation via Swagger UI
+Database: MongoDB (PyMongo Driver)
 
----
+Security & Authentication: JWT (JSON Web Tokens), Passlib (Bcrypt hashing)
 
-## ✨ Key Features
+Frontend: Vanilla JavaScript, HTML5, Modern CSS
 
-- **Authentication & Security:** 
-  - Token-based authentication using OAuth2 & JWT.
-  - Password hashing via Bcrypt.
-  - Role-Based Access Control (Admin/User privileges).
-- **Product & Stock Management:** 
-  - Real-time stock status monitoring.
-  - CRUD operations for beauty and skincare inventory.
-  - Low-stock alerting logic.
-- **Sales & Orders Pipeline:** 
-  - Order creation and customer profile linking.
-  - MongoDB aggregation pipelines for instant revenue and transaction metrics.
-- **Interactive API Documentation:** Automatically generated interactive endpoints accessible through Swagger UI.
+API Documentation: Interactive OpenAPI documentation via Swagger UI
 
----
+✨ Key Features
 
-## 📁 Project Architecture
+Authentication & Security:
 
-```text
+Token-based authentication using OAuth2 & JWT.
+
+Password hashing via Bcrypt.
+
+Role-Based Access Control (Admin/User privileges).
+
+Product & Stock Management:
+
+Real-time stock status monitoring.
+
+CRUD operations for beauty and skincare inventory.
+
+Low-stock alerting logic.
+
+Sales & Orders Pipeline:
+
+Order creation and customer profile linking.
+
+MongoDB aggregation pipelines for instant revenue and transaction metrics.
+
+Interactive API Documentation: Automatically generated interactive endpoints accessible through Swagger UI.
+
+📁 Project Architecture
+
 cosmetics-crm-app/
 ├── routes/             # API modular route handlers
 ├── database.py         # MongoDB connection setup
@@ -43,73 +51,63 @@ cosmetics-crm-app/
 ├── App.js              # Client-side API integration logic
 ├── requirements.txt    # Project dependencies
 └── .gitignore          # Environment and cache exclusion rules
-```
 
----
 
-## 🚀 Getting Started
+🚀 Getting Started
 
-### Prerequisites
+Prerequisites
 
-- Python 3.10+
-- MongoDB instance running locally (e.g., `mongodb://localhost:27017`) or via MongoDB Atlas
+Python 3.10+
 
-### 1. Clone the Repository
+MongoDB instance running locally (e.g., mongodb://localhost:27017) or via MongoDB Atlas
 
-```bash
+1. Installation & Setup
+
+Clone the repository:
+
 git clone https://github.com/FAIZMOHAMMED123/cosmetics-crm-app.git
 cd cosmetics-crm-app
-```
 
-### 2. Environment Setup
 
-Create and activate a virtual environment:
+Set up virtual environment:
 
-```bash
-# Windows
 python -m venv venv
+# On Windows:
 venv\Scripts\activate
-
-# Linux / macOS
-python3 -m venv venv
+# On macOS/Linux:
 source venv/bin/activate
-```
 
-Install required dependencies:
 
-```bash
+Install dependencies:
+
 pip install -r requirements.txt
-```
 
-### 3. Environment Variables
 
-Create a `.env` file in the root directory:
+Environment Variables:
+Create a .env file in the root directory:
 
-```env
 MONGO_URI=mongodb://localhost:27017
 DB_NAME=cosmetics_crm
 JWT_SECRET_KEY=your_jwt_secret_key_here
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
-```
 
-### 4. Run the Application
 
-Start the FastAPI server:
+Run the server:
 
-```bash
 uvicorn main:app --reload
-```
 
-- API Base URL: `http://127.0.0.1:8000`
-- Swagger UI Documentation: `http://127.0.0.1:8000/docs`
-- Redoc Documentation: `http://127.0.0.1:8000/redoc`
 
----
+API Base URL: http://127.0.0.1:8000
 
-## 👤 Author
+Interactive API Docs (Swagger UI): http://127.0.0.1:8000/docs
 
-**Mohammed FAIZ**  
-Computer Engineering Student at ENSA Fès (USMBA)  
-- [GitHub](https://github.com/FAIZMOHAMMED123)
-- [LinkedIn](https://www.linkedin.com)
+Redoc Documentation: http://127.0.0.1:8000/redoc
+
+👤 Author
+
+Mohammed FAIZ
+
+Computer Engineering Student at ENSA Fès (USMBA)
+
+GitHub Profile
