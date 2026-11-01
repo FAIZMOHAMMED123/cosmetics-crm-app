@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmétiques CRM - Back-Office</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased h-screen overflow-hidden flex">
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toast" class="fixed top-5 right-5 z-50 transform transition-all duration-300 translate-x-full opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3">
+    <i id="toast-icon" class="ph ph-info text-xl text-teal-400"></i>
+    <span id="toast-msg" class="text-sm font-medium">Message</span>
+  </div>
+
+  <!-- ================= AUTHENTIFICATION (LOGIN / REGISTER) ================= -->
+  <div id="auth-view" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-100">
+    <div class="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl border border-slate-200">
+
+      <!-- Login Form -->
+      <div id="login-box">
+        <div class="text-center mb-6">
+          <div class="inline-flex p-3 bg-teal-50 text-teal-600 rounded-xl mb-3">
+            <i class="ph ph-drop text-3xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900">CRM Cosmétiques</h2>
+          <p class="text-sm text-slate-500 mt-1">Connexion Administrateur</p>
+        </div>
+        <form id="login-form" class="space-y-4">
+          <input id="login-email" type="email" required placeholder="Email" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+          <input id="login-password" type="password" required placeholder="Mot de passe" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+          <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition text-sm">Se connecter</button>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-box" class="hidden">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-slate-900">Créer un compte</h2>
+        </div>
+        <form id="register-form" class="space-y-4">
+          <input id="reg-username" type="text" required placeholder="Nom d'utilisateur" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+          <input id="reg-email" type="email" required placeholder="Email" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+          <input id="reg-password" type="password" required placeholder="Mot de passe" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+          <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg transition text-sm">S'inscrire</button>
+        </form>
+        <p class="text-xs text-center text-slate-500 mt-4">Déjà un compte ? <button onclick="toggleAuth(false)" class="text-teal-600 hover:underline">Se connecter</button></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APP DASHBOARD ================= -->
+  <div id="app-view" class="hidden w-full h-full flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col transition-all">
+      <div class="h-16 flex items-center px-6 border-b border-slate-800">
+        <i class="ph ph-drop text-2xl text-teal-400 mr-2"></i>
+        <span class="font-bold text-white text-lg tracking-wide">CRM Beauty</span>
+      </div>
+      <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-teal-500/10 text-teal-400">
+          <i class="ph ph-squares-four text-lg"></i> Vue d'ensemble
+        </button>
+        <button onclick="switchTab('products')" id="nav-products" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+          <i class="ph ph-package text-lg"></i> Produits
+        </button>
+        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+          <i class="ph ph-users text-lg"></i> Clients
+        </button>
+        <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+          <i class="ph ph-receipt text-lg"></i> Commandes
+        </button>
+        <button onclick="switchTab('team')" id="nav-team" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition">
+          <i class="ph ph-shield-check text-lg"></i> Équipe
+        </button>
+      </nav>
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-lg text-sm font-medium transition">
+          <i class="ph ph-sign-out text-lg"></i> Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden">
+
+      <!-- Header -->
+      <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+        <h2 id="page-title" class="text-xl font-bold text-slate-800">Vue d'ensemble</h2>
+        <button onclick="initDashboard()" class="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Actualiser">
+          <i class="ph ph-arrows-clockwise text-xl"></i>
+        </button>
+      </header>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto p-8">
+
+        <!-- ================= TAB: VUE D'ENSEMBLE ================= -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div><p class="text-xs font-semibold uppercase text-slate-400">Total Ventes</p><h3 id="kpi-sales" class="text-2xl font-bold text-slate-900 mt-1">0 DH</h3></div>
+              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i class="ph ph-trend-up text-2xl"></i></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div><p class="text-xs font-semibold uppercase text-slate-400">Bénéfice Net</p><h3 id="kpi-profit" class="text-2xl font-bold text-teal-600 mt-1">0 DH</h3></div>
+              <div class="p-3 bg-teal-50 text-teal-600 rounded-xl"><i class="ph ph-wallet text-2xl"></i></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div><p class="text-xs font-semibold uppercase text-slate-400">Commandes</p><h3 id="kpi-orders" class="text-2xl font-bold text-slate-900 mt-1">0</h3></div>
+              <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i class="ph ph-shopping-cart text-2xl"></i></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="p-4 bg-amber-50 text-amber-600 rounded-xl"><i class="ph ph-crown text-3xl"></i></div>
+                <div>
+                  <p class="text-xs font-semibold uppercase text-slate-400">Meilleur Client</p>
+                  <h3 id="top-customer-name" class="text-lg font-bold text-slate-900">Chargement...</h3>
+                  <p id="top-customer-orders" class="text-sm text-slate-500">0 commandes</p>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="p-4 bg-purple-50 text-purple-600 rounded-xl"><i class="ph ph-fire text-3xl"></i></div>
+                <div>
+                  <p class="text-xs font-semibold uppercase text-slate-400">Produit le plus vendu</p>
+                  <h3 id="top-product-name" class="text-lg font-bold text-slate-900">Chargement...</h3>
+                  <p id="top-product-qty" class="text-sm text-slate-500">0 unités vendues</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
+              <div class="p-5 border-b border-slate-100 flex items-center gap-2">
+                <i class="ph ph-warning-diamond text-rose-500 text-lg"></i>
+                <h3 class="font-bold text-slate-900">Stock Faible (≤ 5)</h3>
+              </div>
+              <div id="low-stock-list" class="p-4 space-y-3 overflow-y-auto flex-1 bg-slate-50"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB: PRODUITS ================= -->
+        <div id="tab-products" class="tab-content hidden space-y-6">
+  <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <h3 id="product-form-title" class="font-bold text-slate-900 mb-4">
+      <i class="ph ph-plus-circle text-teal-600 mr-2"></i>Ajouter un Produit
+    </h3>
+    <form id="product-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <input type="hidden" id="edit-prod-id" value="">
+      <input id="prod-name" type="text" placeholder="Nom du produit" required class="md:col-span-2 px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+      <input id="prod-cat" type="text" placeholder="Catégorie" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+      <input id="prod-pa" type="number" step="0.01" placeholder="Prix Achat" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+      <input id="prod-pv" type="number" step="0.01" placeholder="Prix Vente" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+      <input id="prod-stock" type="number" placeholder="Stock" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+      
+      <div class="md:col-span-5 flex gap-3">
+        <button id="btn-save-prod" type="submit" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition">Enregistrer le produit</button>
+        <button id="btn-cancel-prod" type="button" onclick="annulerModification()" class="hidden px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium rounded-lg transition">Annuler</button>
+      </div>
+    </form>
+  </div>
+
+          <div class="flex items-center gap-3 px-4 py-2.5 bg-white rounded-xl border border-slate-200 shadow-sm focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100 transition">
+            <i class="ph ph-magnifying-glass text-lg text-teal-600 font-bold"></i>
+            <input id="product-search" type="text" placeholder="Rechercher un produit par nom ou catégorie..." oninput="filterProducts()" class="w-full text-sm outline-none text-slate-800 placeholder-slate-400 bg-transparent" />
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold">
+                <tr><th class="px-6 py-4">Produit</th><th class="px-6 py-4">Catégorie</th><th class="px-6 py-4">Prix Vente</th><th class="px-6 py-4">Stock</th><th class="px-6 py-4 text-right">Action</th></tr>
+              </thead>
+              <tbody id="products-table" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= TAB: CLIENTS ================= -->
+        <div id="tab-customers" class="tab-content hidden space-y-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-4"><i class="ph ph-user-plus text-teal-600 mr-2"></i>Ajouter un Client</h3>
+            <form id="customer-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <input id="cust-name" type="text" placeholder="Nom complet" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+              <input id="cust-phone" type="tel" placeholder="Téléphone" required class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+              <input id="cust-email" type="email" placeholder="Email (Optionnel)" class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+              <input id="cust-address" type="text" placeholder="Adresse" class="px-4 py-2 text-sm rounded-lg border border-slate-200 outline-none focus:border-teal-500" />
+              <button type="submit" class="md:col-span-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg">Enregistrer Client</button>
+            </form>
+          </div>
+
+          <div class="flex items-center gap-3 px-4 py-2.5 bg-white rounded-xl border border-slate-200 shadow-sm focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100 transition">
+            <i class="ph ph-magnifying-glass text-lg text-teal-600 font-bold"></i>
+            <input id="customer-search" type="text" placeholder="Rechercher un client par nom ou téléphone..." oninput="filterCustomers()" class="w-full text-sm outline-none text-slate-800 placeholder-slate-400 bg-transparent" />
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold">
+                <tr><th class="px-6 py-4">Nom Complet</th><th class="px-6 py-4">Téléphone</th><th class="px-6 py-4 text-center">Historique</th><th class="px-6 py-4 text-right">Action</th></tr>
+              </thead>
+              <tbody id="customers-table" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= TAB: COMMANDES ================= -->
+        <div id="tab-orders" class="tab-content hidden space-y-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <i class="ph ph-plus-circle text-teal-600 text-lg"></i> Créer une nouvelle commande
+            </h3>
+            <form id="order-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Client</label>
+                <select id="order-customer-select" required class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 bg-white">
+                  <option value="">Sélectionner un client...</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Produit</label>
+                <select id="order-product-select" required class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 bg-white">
+                  <option value="">Sélectionner un produit...</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Quantité</label>
+                <input id="order-quantity" type="number" min="1" value="1" required class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500" />
+              </div>
+
+              <div class="flex items-end">
+                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
+                  Enregistrer Commande
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="flex items-center gap-3 px-4 py-2.5 bg-white rounded-xl border border-slate-200 shadow-sm focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100 transition">
+            <i class="ph ph-magnifying-glass text-lg text-teal-600 font-bold"></i>
+            <input id="order-search" type="text" placeholder="Rechercher une commande..." oninput="filterOrders()" class="w-full text-sm outline-none text-slate-800 placeholder-slate-400 bg-transparent" />
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+  <th class="px-6 py-4">Réf</th>
+  <th class="px-6 py-4">Client</th>
+  <th class="px-6 py-4">Produit</th>
+  <th class="px-6 py-4 text-center">Quantité</th>
+  <th class="px-6 py-4 text-right">Action</th>
+</tr>
+              </thead>
+              <tbody id="orders-table" class="divide-y divide-slate-100 text-sm">
+                <tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">Chargement...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+       <!-- ================= TAB: EQUIPE ================= -->
+        <div id="tab-team" class="tab-content space-y-6">
+          
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <i class="ph ph-user-plus text-teal-600 text-lg"></i>
+              Ajouter un Administrateur
+            </h3>
+            
+            <form id="team-form" onsubmit="handleCreateTeamMember(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                <input 
+                  type="email" 
+                  id="team-email" 
+                  required 
+                  placeholder="admin@example.com"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 focus:bg-white transition"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mot de passe</label>
+                <input 
+                  type="password" 
+                  id="team-password" 
+                  required 
+                  placeholder="••••••••"
+                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 focus:bg-white transition"
+                />
+              </div>
+
+              <div>
+                <button 
+                  type="submit" 
+                  class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+                  <i class="ph ph-plus-circle text-lg"></i>
+                  Ajouter au système
+                </button>
+              </div>
+            </form>
+          </div>
+
+     
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 class="font-bold text-slate-900">Membres de l'équipe</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Comptes administrateurs ayant accès au back-office</p>
+              </div>
+              <span id="team-count" class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">0 admins</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                    <th class="px-6 py-3.5">Identifiant</th>
+                    <th class="px-6 py-3.5">Email</th>
+                    <th class="px-6 py-3.5">Rôle</th>
+                    <th class="px-6 py-3.5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="team-table">
+                  <tr>
+                    <td colspan="4" class="px-6 py-8 text-center text-slate-400 text-sm">Chargement...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+  <!-- ================= MODAL HISTORIQUE CLIENT ================= -->
+  <div id="customer-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl border border-slate-200 flex flex-col max-h-[80vh]">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-bold text-lg text-slate-900">Historique d'achats : <span id="modal-customer-name" class="text-teal-600"></span></h3>
+<button type="button" onclick="closeCustomerModal()" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+        <i class="ph ph-x text-2xl pointer-events-none"></i>
+      </button> 
+         </div>
+      <div class="p-6 overflow-y-auto flex-1">
+        <div id="modal-customer-stats" class="mb-4 text-sm font-medium text-slate-600"></div>
+        <table class="w-full text-left border-collapse text-sm">
+          <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-semibold">
+            <tr><th class="px-4 py-2">ID Commande</th><th class="px-4 py-2">Produit</th><th class="px-4 py-2">Quantité</th></tr>
+          </thead>
+          <tbody id="modal-orders-table" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
